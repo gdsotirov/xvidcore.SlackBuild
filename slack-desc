@@ -1,0 +1,10 @@
+xvidcore: XviDCore 1.1.0 beta 1 (2005-01-16)
+xvidcore:
+xvidcore: XviD decoder/encoder library and headers.
+xvidcore:
+xvidcore:
+xvidcore: ---
+xvidcore: Package build by Georgi D. Sotirov <gdsotirov@dir.bg>
+xvidcore: Configure command: ./configure --prefix=/usr/local
+xvidcore: Build date: 2005-03-15 22:13 EET
+xvidcore:
