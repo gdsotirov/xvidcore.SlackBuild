@@ -8,7 +8,7 @@
 
 NAME=xvidcore
 VERSION=1.1.3
-BUILD=2
+BUILD=3
 
 cd $TMP
 tar -zxvf $CWD/$NAME-$VERSION.tar.gz
@@ -25,12 +25,12 @@ CXXFLAGS=$SLKCFLAGS \
             --sysconfdir=/etc \
             --localstatedir=/var
 
-make || exit 1 
+make -j4 || exit 1 
 
 PKG="$TMP/package-$NAME"
 mkdir -p $PKG
 
-make DESTDIR=$PKG install
+make DESTDIR=$PKG install || exit 2
 
 ( cd $PKG/usr/lib
   ln -s libxvidcore.so.4.1 libxvidcore.so.4
@@ -42,9 +42,11 @@ DOCFILES="$DOCFILES CodingStyle"
 
 mkdir -p $PKG/install
 install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
+install -m 644 $CWD/slack-required $PKG/install/slack-required
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
 install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
 install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 cd $PKG
