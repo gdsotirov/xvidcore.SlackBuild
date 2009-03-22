@@ -7,11 +7,14 @@
 . ../slack-package.conf
 
 NAME=xvidcore
-VERSION=1.1.3
-BUILD=3
+VERSION=1.2.1
+BUILD=1
+LIBVER_MAJ=4
+LIBVER_MIN=2
 
 cd $TMP
 tar -zxvf $CWD/$NAME-$VERSION.tar.gz
+mv $TMP/$NAME $TMP/$NAME-$VERSION
 SRC=$TMP/$NAME-$VERSION
 cd $SRC
 fix_source
@@ -23,18 +26,18 @@ CXXFLAGS=$SLKCFLAGS \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
             --sysconfdir=/etc \
-            --localstatedir=/var
+            --localstatedir=/var || exit 1
 
-make -j4 || exit 1 
+make -j4 || exit 2 
 
 PKG="$TMP/package-$NAME"
 mkdir -p $PKG
 
-make DESTDIR=$PKG install || exit 2
+make DESTDIR=$PKG install || exit 3
 
 ( cd $PKG/usr/lib
-  ln -s libxvidcore.so.4.1 libxvidcore.so.4
-  ln -s libxvidcore.so.4.1 libxvidcore.so )
+  ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so.${LIBVER_MAJ}
+  ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so )
 
 ( cd $PKG; strip_lib )
 DOCFILES="$DOCFILES CodingStyle"
