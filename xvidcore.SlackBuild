@@ -1,25 +1,48 @@
 #!/bin/sh
 #
-# SlackBuild for xvidcore
+# SlackBuild for XvidCore
 # Written by Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 
 . ../slack-package.conf
 
 NAME=xvidcore
-VERSION=1.2.1
-BUILD=1
+VERSION=1.2.2
+ARCH=${ARCH:-i486}
+BUILD=${BUILD:-1}
 LIBVER_MAJ=4
 LIBVER_MIN=2
 
-cd $TMP
-tar -zxvf $CWD/$NAME-$VERSION.tar.gz
-mv $TMP/$NAME $TMP/$NAME-$VERSION
-SRC=$TMP/$NAME-$VERSION
-cd $SRC
-fix_source
-cd build/generic
+TMP=${TMP:-/tmp}
+CWD=${CWD:-`pwd`}
+PKG_DIR=${PKG_DIR:-/tmp}
 
+if [ ! -e $TMP ]; then
+  mkdir -p $TMP # location to build the source
+fi
+
+SRC=$TMP/$NAME-$VERSION
+if [ -e $SRC -a -d $SRC ]; then
+  echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
+  exit 1
+fi
+
+PKG=$TMP/package-$NAME
+if [ -e $PKG -a -d $PKG ]; then
+  echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
+  exit 2
+fi
+mkdir -p $PKG
+
+# Extract and fix source
+cd $TMP
+tar xvf $CWD/$NAME-$VERSION.tar.bz2
+mv $NAME $NAME-$VERSION
+cd $NAME-$VERSION
+fix_source
+
+# Configure
+cd build/generic
 CFLAGS=$SLKCFLAGS \
 CXXFLAGS=$SLKCFLAGS \
 ./configure --build=$ARCH-slackware-linux \
@@ -28,6 +51,7 @@ CXXFLAGS=$SLKCFLAGS \
             --sysconfdir=/etc \
             --localstatedir=/var || exit 1
 
+# Build & install
 make -j4 || exit 2 
 
 PKG="$TMP/package-$NAME"
@@ -35,12 +59,13 @@ mkdir -p $PKG
 
 make DESTDIR=$PKG install || exit 3
 
+# Prepare
 ( cd $PKG/usr/lib
   ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so.${LIBVER_MAJ}
-  ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so )
-
+  ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so
+  rm -f libxvidcore.a )
 ( cd $PKG; strip_lib )
-DOCFILES="$DOCFILES CodingStyle"
+DOCFILES="$DOCFILES ChangeLog-1.0 CodingStyle"
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
 
 mkdir -p $PKG/install
@@ -54,9 +79,9 @@ install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NA
 
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
-makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 cd $PKG_DIR
-md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+md5sum $PKGNAME.txz > $PKGNAME.txz.md5
 cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
 
 if [ "$1" == "--cleanup" ]; then
