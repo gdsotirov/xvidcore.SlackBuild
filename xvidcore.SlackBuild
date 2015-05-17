@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: xvidcore.SlackBuild,v 1.6 2015/05/17 06:20:26 gsotirov Exp $
+# $Id: xvidcore.SlackBuild,v 1.7 2015/05/17 06:35:04 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -74,7 +74,7 @@ make V=1 -j4 || exit 6
 make DESTDIR=$PKG install || exit 7
 
 # Prepare
-( cd $PKG/usr/lib; rm -f libxvidcore.a )
+( cd $PKG/usr/lib${LIBDIRSUFFIX}; rm -f libxvidcore.a )
 ( cd $PKG; strip_lib )
 DOCFILES="$DOCFILES ChangeLog-1.0 CodingStyle"
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
