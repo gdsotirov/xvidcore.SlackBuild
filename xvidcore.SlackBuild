@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Slackware build script for XviD Core
-# Copyright (C) 2007-2010,2012 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2007-2015 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -17,17 +17,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: xvidcore.SlackBuild,v 1.5 2012/08/28 21:44:09 gsotirov Exp $
+# $Id: xvidcore.SlackBuild,v 1.6 2015/05/17 06:20:26 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=xvidcore
-VERSION=1.3.2
+VERSION=1.3.3
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
-LIBVER_MAJ=4
-LIBVER_MIN=2
 
 TMP=${TMP:-/tmp}
 CWD=${CWD:-`pwd`}
@@ -52,10 +50,13 @@ mkdir -p $PKG
 
 # Extract and fix source
 cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.?z*
+tar -xvf $CWD/$NAME-$VERSION.tar.?z* || exit 3
 mv $NAME $NAME-$VERSION
 cd $NAME-$VERSION
 fix_source
+
+# Apply patch(es)
+patch -b -z.orig -p1 < $CWD/$NAME-$VERSION.diff || exit 4
 
 # Configure
 cd build/generic
@@ -66,21 +67,14 @@ CXXFLAGS=$SLKCFLAGS \
             --prefix=/usr \
             --sysconfdir=/etc \
             --libdir=/usr/lib${LIBDIRSUFFIX} \
-            --localstatedir=/var || exit 1
+            --localstatedir=/var || exit 5
 
 # Build & install
-make -j4 || exit 2 
-
-PKG="$TMP/package-$NAME"
-mkdir -p $PKG
-
-make DESTDIR=$PKG install || exit 3
+make V=1 -j4 || exit 6
+make DESTDIR=$PKG install || exit 7
 
 # Prepare
-( cd $PKG/usr/lib
-  ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so.${LIBVER_MAJ}
-  ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so
-  rm -f libxvidcore.a )
+( cd $PKG/usr/lib; rm -f libxvidcore.a )
 ( cd $PKG; strip_lib )
 DOCFILES="$DOCFILES ChangeLog-1.0 CodingStyle"
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
@@ -90,9 +84,10 @@ install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
 install -m 644 $CWD/slack-required $PKG/install/slack-required
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
-install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
-install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
+install -m 644 $CWD/slack-desc          $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required      $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/$NAME-$VERSION.diff $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME-$VERSION.diff
+install -m 644 $CWD/$NAME.SlackBuild    $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
