@@ -17,13 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: xvidcore.SlackBuild,v 1.5 2012/08/28 21:44:09 gsotirov Exp $
+# $Id: xvidcore.SlackBuild,v 1.5.2.1 2016/08/16 19:04:15 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=xvidcore
-VERSION=1.3.2
+VERSION=1.3.1
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 LIBVER_MAJ=4
@@ -77,7 +77,7 @@ mkdir -p $PKG
 make DESTDIR=$PKG install || exit 3
 
 # Prepare
-( cd $PKG/usr/lib
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
   ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so.${LIBVER_MAJ}
   ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so
   rm -f libxvidcore.a )
