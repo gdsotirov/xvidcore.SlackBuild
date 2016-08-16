@@ -4,7 +4,7 @@
 # Written by Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 
-. ../slack-package.conf
+. ../../slack-package.conf
 
 NAME=xvidcore
 VERSION=1.2.2
@@ -48,6 +48,7 @@ CXXFLAGS=$SLKCFLAGS \
 ./configure --build=$ARCH-slackware-linux \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
+            --libdir=/usr/lib${LIBDIRSUFFIX} \
             --sysconfdir=/etc \
             --localstatedir=/var || exit 1
 
@@ -60,7 +61,7 @@ mkdir -p $PKG
 make DESTDIR=$PKG install || exit 3
 
 # Prepare
-( cd $PKG/usr/lib
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
   ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so.${LIBVER_MAJ}
   ln -s libxvidcore.so.${LIBVER_MAJ}.${LIBVER_MIN} libxvidcore.so
   rm -f libxvidcore.a )
