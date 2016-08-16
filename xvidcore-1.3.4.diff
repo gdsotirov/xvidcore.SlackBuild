@@ -1,5 +1,5 @@
 # Enable verbose make output with V=1 on the command line
-# Copyright (C) 2015 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2016 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -15,9 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-diff -urNad xvidcore-1.3.3-orig/build/generic/Makefile xvidcore-1.3.3/build/generic/Makefile
---- xvidcore-1.3.3-orig/build/generic/Makefile	2014-04-08 23:41:05.000000000 +0300
-+++ xvidcore-1.3.3/build/generic/Makefile	2015-05-17 09:12:19.000000000 +0300
+diff -urNad xvidcore-1.3.4-orig/build/generic/Makefile xvidcore-1.3.4/build/generic/Makefile
+--- xvidcore-1.3.4-orig/build/generic/Makefile	2015-06-21 17:21:32.000000000 +0300
++++ xvidcore-1.3.4/build/generic/Makefile	2016-08-16 22:11:21.000000000 +0300
 @@ -45,6 +45,9 @@
  include platform.inc
  endif
